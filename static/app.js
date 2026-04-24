@@ -42,6 +42,9 @@ function setSelectedSources(values = []) {
   document.querySelectorAll('input[name="source_check"]').forEach((el) => {
     el.checked = values.includes(el.value);
   });
+
+function allFields() {
+  return Array.from(formContainer.querySelectorAll('input[name], select[name], textarea[name]'));
 }
 
 function collectPayload() {
@@ -62,6 +65,9 @@ function collectPayload() {
   }
 
   if (currentProjectId) payload.id = currentProjectId;
+  if (currentProjectId) {
+    payload.id = currentProjectId;
+  }
   return payload;
 }
 
@@ -143,6 +149,9 @@ function renderMap(results = {}) {
   });
 
   map.setView(center, 13);
+  checklistOutput.innerHTML = '';
+  explosiveOutput.value = '';
+  contaminationOutput.value = '';
 }
 
 async function refreshProjects() {
@@ -166,6 +175,7 @@ async function refreshProjects() {
 async function saveProject() {
   const payload = collectPayload();
   if (!payload.project_name?.trim()) {
+  if (!payload.project_name.trim()) {
     alert('Project name is required.');
     return;
   }
@@ -258,6 +268,20 @@ async function generateSummaries() {
 }
 
 function exportMarkdown() {
+  if (data.missing_evidence.length === 0) {
+    const li = document.createElement('li');
+    li.textContent = 'No obvious gaps detected from provided fields; complete final staff review.';
+    checklistOutput.appendChild(li);
+  } else {
+    data.missing_evidence.forEach((item) => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      checklistOutput.appendChild(li);
+    });
+  }
+}
+
+async function exportMarkdown() {
   if (!currentProjectId) {
     alert('Save the project before export.');
     return;
