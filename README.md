@@ -50,6 +50,17 @@ If you need a different port:
 PORT=7000 ./start.sh
 ```
 
+Then open locally: <http://127.0.0.1:8080>
+
+For LAN access from another device on your network, use:
+
+- `http://<your-server-lan-ip>:8080` (example: `http://192.168.1.69:8080`)
+
+You can also override host/port explicitly:
+
+```bash
+HOST=0.0.0.0 PORT=8080 ./start.sh
+```
 Then open: <http://127.0.0.1:8080>
 Then open: <http://127.0.0.1:6000>
 Then open: <http://127.0.0.1:5000>

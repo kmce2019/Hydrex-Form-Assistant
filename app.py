@@ -305,6 +305,8 @@ def export_markdown(project_id: int):
 if __name__ == "__main__":
     init_db()
     port = int(os.environ.get("PORT", "8080"))
+    host = os.environ.get("HOST", "0.0.0.0")
+    app.run(debug=True, host=host, port=port)
     app.run(debug=True, host="127.0.0.1", port=port)
     app.run(debug=True, host="127.0.0.1", port=6000)
     app.run(debug=True, host="127.0.0.1", port=5000)
