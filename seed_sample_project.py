@@ -43,6 +43,7 @@ def main() -> None:
         "density_or_conversion": "No",
         "nearby_tanks_notes": "One aboveground diesel AST identified approximately 0.8 miles southeast; confirm capacity and ownership.",
         "contamination_sources_notes": "Former dry cleaner listed 0.3 miles west; one RCRA facility and two LPST sites require staff review.",
+        "contamination_sources_notes": "Former dry cleaner listed 0.3 miles west; no other obvious sources noted in initial map review.",
         "rcra_count": 1,
         "lpst_count": 2,
         "pst_count": 3,
@@ -56,6 +57,8 @@ def main() -> None:
         "buffer_one_mile_json": json.dumps({"type": "circle", "center": {"lat": 31.105, "lon": -97.748}, "radius_miles": 1.0}),
         "environmental_results_json": json.dumps(environmental_results),
         "source_tracking_json": json.dumps(environmental_results["source_tracking"]),
+        "data_sources_checked": "EPA Envirofacts, state tank database, county GIS contamination overlays, aerial map buffer analysis.",
+        "uploaded_refs": "Enviro map export 2026-04-14; Tank search PDF 2026-04-14; Site photos 2026-04-15.",
     }
 
     with get_connection() as conn:
@@ -66,6 +69,7 @@ def main() -> None:
         conn.commit()
 
     print("Seeded sample project with environmental search results: Maple Court Rehab")
+    print("Seeded sample project: Maple Court Rehab")
 
 
 if __name__ == "__main__":
