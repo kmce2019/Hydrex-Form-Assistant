@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sqlite3
 from datetime import date
 from pathlib import Path
@@ -303,5 +304,7 @@ def export_markdown(project_id: int):
 
 if __name__ == "__main__":
     init_db()
+    port = int(os.environ.get("PORT", "8080"))
+    app.run(debug=True, host="127.0.0.1", port=port)
     app.run(debug=True, host="127.0.0.1", port=6000)
     app.run(debug=True, host="127.0.0.1", port=5000)
