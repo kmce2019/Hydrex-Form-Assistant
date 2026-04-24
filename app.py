@@ -306,3 +306,5 @@ if __name__ == "__main__":
     init_db()
     port = int(os.environ.get("PORT", "8080"))
     app.run(debug=True, host="127.0.0.1", port=port)
+    app.run(debug=True, host="127.0.0.1", port=6000)
+    app.run(debug=True, host="127.0.0.1", port=5000)
