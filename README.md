@@ -61,6 +61,9 @@ You can also override host/port explicitly:
 ```bash
 HOST=0.0.0.0 PORT=8080 ./start.sh
 ```
+Then open: <http://127.0.0.1:8080>
+Then open: <http://127.0.0.1:6000>
+Then open: <http://127.0.0.1:5000>
 
 ## Seed a Sample Project
 
