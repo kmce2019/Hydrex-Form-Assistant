@@ -96,6 +96,42 @@ LAN access:
 - `http://<your-server-lan-ip>:8080` (example: `http://192.168.1.69:8080`)
 
 Override host/port:
+
+```bash
+HOST=0.0.0.0 PORT=8080 ./start.sh
+```
+
+## Run as a service (systemd)
+
+A systemd unit template is provided at:
+
+- `deploy/systemd/hydrex-form-assistant.service`
+
+Install/start with:
+
+```bash
+sudo ./scripts/install_service.sh
+```
+
+Manual commands (if preferred):
+
+```bash
+sudo cp deploy/systemd/hydrex-form-assistant.service /etc/systemd/system/hydrex-form-assistant.service
+sudo sed -i "s|__SERVICE_USER__|$USER|g" /etc/systemd/system/hydrex-form-assistant.service
+sudo sed -i "s|__WORKDIR__|$(pwd)|g" /etc/systemd/system/hydrex-form-assistant.service
+sudo systemctl daemon-reload
+sudo systemctl enable hydrex-form-assistant
+sudo systemctl start hydrex-form-assistant
+sudo systemctl status hydrex-form-assistant
+```
+
+Follow logs:
+
+```bash
+sudo journalctl -u hydrex-form-assistant -f
+```
+
+## Seed sample project
 If you need a different port:
 
 ```bash
