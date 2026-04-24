@@ -89,6 +89,8 @@ pip install -r requirements.txt
 ./start.sh
 ```
 
+`start.sh` now runs a quick syntax check (`python3 -m py_compile app.py`) before launching, so startup errors are surfaced early.
+
 Open locally: <http://127.0.0.1:8080>
 
 LAN access:
@@ -131,6 +133,13 @@ Follow logs:
 sudo journalctl -u hydrex-form-assistant -f
 ```
 
+If service mode fails, validate app syntax directly:
+
+```bash
+python3 -m py_compile app.py
+```
+
+## Seed sample project
 ## Seed sample project
 If you need a different port:
 
