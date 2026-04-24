@@ -44,6 +44,7 @@ pip install -r requirements.txt
 ./start.sh
 ```
 
+Then open: <http://127.0.0.1:6000>
 Then open: <http://127.0.0.1:5000>
 
 ## Seed a Sample Project
