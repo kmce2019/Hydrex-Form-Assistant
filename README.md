@@ -43,6 +43,20 @@ Hydrex Form Assistant is a local-first internal web app for collecting HUD envir
 6. App parses optional uploaded TCEQ CSV and filters by distance.
 7. App stores structured results JSON, source-tracking JSON, and buffer metadata in SQLite.
 8. User reviews, manually overrides if needed, then generates worksheet draft text.
+Hydrex Form Assistant is a local-first internal web app for collecting project intake data and drafting language for HUD environmental worksheets.
+
+## Features
+
+- Single-screen dashboard UI for intake + outputs.
+- SQLite-backed project save/load workflow.
+- Intake fields for project, hazard, contamination, and evidence documentation.
+- Draft generation for:
+  - Explosive and Flammable Hazards
+  - Contamination and Toxic Substances
+- Missing evidence checklist generation.
+- Copy-to-clipboard for each generated summary.
+- Export project report as Markdown.
+- Internal-use disclaimer requiring qualified staff review.
 
 ## Tech Stack
 
@@ -56,6 +70,7 @@ Hydrex Form Assistant is a local-first internal web app for collecting HUD envir
 
 1. Ensure Python 3.10+ is installed.
 2. Create and activate virtual environment:
+2. Create and activate a virtual environment:
 
 ```bash
 python3 -m venv .venv
@@ -117,6 +132,30 @@ sudo journalctl -u hydrex-form-assistant -f
 ```
 
 ## Seed sample project
+If you need a different port:
+
+```bash
+PORT=7000 ./start.sh
+```
+
+Then open locally: <http://127.0.0.1:8080>
+
+For LAN access from another device on your network, use:
+
+- `http://<your-server-lan-ip>:8080` (example: `http://192.168.1.69:8080`)
+
+You can also override host/port explicitly:
+
+```bash
+HOST=0.0.0.0 PORT=8080 ./start.sh
+```
+
+## Seed sample project
+Then open: <http://127.0.0.1:8080>
+Then open: <http://127.0.0.1:6000>
+Then open: <http://127.0.0.1:5000>
+
+## Seed a Sample Project
 
 ```bash
 python3 seed_sample_project.py
@@ -160,3 +199,13 @@ These return structured JSON-style objects and mirror the backend workflow desig
 
 - SQLite DB: `hydrex_form_assistant.db`
 - Markdown exports: `exports/`
+A sample project named **Maple Court Rehab** will be inserted into the SQLite database.
+
+## Data Storage
+
+- SQLite file: `hydrex_form_assistant.db`
+- Markdown exports: `exports/`
+
+## Notes
+
+This app does **not** make final environmental determinations. Generated text must be reviewed and finalized by qualified Hydrex staff before submission.
