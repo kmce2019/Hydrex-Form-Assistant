@@ -12,6 +12,11 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
+import os
+import sqlite3
+from datetime import date
+from pathlib import Path
+from typing import Any
 
 from flask import Flask, jsonify, render_template, request, send_file
 
@@ -370,6 +375,19 @@ def generate_explosives_summary(project: dict[str, Any]) -> str:
         f"Explosive and Flammable Hazards draft summary: The project screening indicates residential-density/conversion relevance: {density}. "
         f"Stationary aboveground tank review notes: {tanks}. Database/map-assisted review identified {pst_count} PST-related sites within one mile. "
         f"{nearest_phrase} Hydrex staff must verify separation distances, map evidence, and final hazard conclusions before submission."
+def generate_explosives_summary(project: dict[str, Any]) -> str:
+    density = value_or_unknown(project.get("density_or_conversion"))
+    tanks = value_or_unknown(project.get("nearby_tanks_notes"))
+    project_type = value_or_unknown(project.get("project_type"))
+    work = value_or_unknown(project.get("description_of_work"))
+
+    return (
+        f"Explosive and Flammable Hazards draft summary: The {value_or_unknown(project.get('project_name'))} "
+        f"project is identified as {project_type}. The proposed activity is described as: {work}. "
+        f"Project screening indicates whether development, construction, rehabilitation increasing residential "
+        f"density, or conversion applies: {density}. Available documentation on stationary aboveground storage "
+        f"tanks within one mile states: {tanks}. Based on these records, Hydrex staff should verify map "
+        f"support, confirm any hazards requiring separation-distance analysis, and finalize worksheet conclusions."
     )
 
 
@@ -391,6 +409,21 @@ def generate_contamination_summary(project: dict[str, Any]) -> str:
         f"EPA/TCEQ-style database and source review considered: {sources}. "
         f"The search identified {rcra} RCRA sites and {lpst} LPST sites within 0.5 mile. {nearest_phrase} {finding} "
         "This generated text is draft support and requires qualified Hydrex environmental review."
+    sources = value_or_unknown(project.get("contamination_sources_notes"))
+    groundwater = value_or_unknown(project.get("groundwater_notes"))
+    radon = value_or_unknown(project.get("radon_notes"))
+    rcra = int_or_zero(project.get("rcra_count"))
+    lpst = int_or_zero(project.get("lpst_count"))
+    pst = int_or_zero(project.get("pst_count"))
+    data_sources = value_or_unknown(project.get("data_sources_checked"))
+
+    return (
+        "Contamination and Toxic Substances draft summary: Site review considered available environmental "
+        f"sources and map layers ({data_sources}). Notes on contamination sources within 0.5 mile: {sources}. "
+        f"Mapped database counts include RCRA sites: {rcra}, LPST sites: {lpst}, and PST sites: {pst}. "
+        f"Groundwater contamination review notes: {groundwater}. Radon exemption/testing status notes: {radon}. "
+        "Hydrex staff should confirm whether toxic, hazardous, or radioactive substances are present, identify "
+        "mitigation needs, and complete final worksheet determinations based on supporting evidence."
     )
 
 
@@ -409,6 +442,37 @@ def missing_evidence(project: dict[str, Any]) -> list[str]:
     if value_or_unknown(project.get("description_of_work")) == "not documented":
         checklist.append("Description of work and supporting reports")
 
+    required_text_fields = {
+        "project_name": "Project name",
+        "client": "Client",
+        "address": "Address / location description",
+        "city": "City",
+        "county": "County",
+        "state": "State",
+        "project_type": "Project type",
+        "site_visit_date": "Site visit date",
+        "inspector": "Inspector/preparer",
+        "description_of_work": "Description of work",
+        "density_or_conversion": "Development/construction/rehab density/conversion determination",
+        "nearby_tanks_notes": "Notes on nearby aboveground storage tanks within 1 mile",
+        "contamination_sources_notes": "Notes on contamination sources within 0.5 mile",
+        "groundwater_notes": "Groundwater contamination notes",
+        "radon_notes": "Radon exemption/testing notes",
+        "data_sources_checked": "Data sources checked",
+        "uploaded_refs": "Uploaded map/report references",
+    }
+
+    for field, label in required_text_fields.items():
+        if not value_or_unknown(project.get(field)) or value_or_unknown(project.get(field)) == "not documented":
+            checklist.append(f"Provide {label}.")
+
+    if int_or_zero(project.get("rcra_count")) == 0:
+        checklist.append("Verify and document whether RCRA sites count is truly zero or not yet researched.")
+    if int_or_zero(project.get("lpst_count")) == 0:
+        checklist.append("Verify and document whether LPST count is truly zero or not yet researched.")
+    if int_or_zero(project.get("pst_count")) == 0:
+        checklist.append("Verify and document whether PST count is truly zero or not yet researched.")
+
     return checklist
 
 
@@ -423,6 +487,11 @@ def build_markdown_report(project: dict[str, Any]) -> str:
     lines.append("")
     lines.append("## Project Intake")
 
+    lines = [
+        f"# Hydrex Form Assistant Report - {value_or_unknown(project.get('project_name'))}",
+        "",
+        "## Project Intake",
+    ]
     for field in FIELDS:
         if field.endswith("_json"):
             continue
@@ -454,6 +523,45 @@ def build_markdown_report(project: dict[str, Any]) -> str:
     lines.append(
         "**Disclaimer:** This tool assists with data gathering and draft language generation only. "
         "All environmental determinations must be reviewed and approved by qualified Hydrex Environmental staff."
+    lines.extend(
+        [
+            "",
+            "## Automated Data Results",
+            f"- **RCRA sites within 0.5 mile:** {int_or_zero(results.get('rcra_count_half_mile'))}",
+            f"- **LPST sites within 0.5 mile:** {int_or_zero(results.get('lpst_count_half_mile'))}",
+            f"- **PST sites within 1 mile:** {int_or_zero(results.get('pst_count_one_mile'))}",
+            f"- **Nearest facility distance:** {results.get('nearest_facility_miles', 'not documented')}",
+            f"- **Sources used:** {', '.join(results.get('sources_used', [])) or 'not documented'}",
+            "",
+            "## Explosive and Flammable Hazards (Draft)",
+            explosive,
+            "",
+            "## Contamination and Toxic Substances (Draft)",
+            contamination,
+            "",
+            "## Evidence Checklist",
+        ]
+    )
+
+    lines.extend([f"- [ ] {item}" for item in checklist])
+            "## Missing Evidence Checklist",
+        ]
+    )
+
+    if checklist:
+        lines.extend([f"- [ ] {item}" for item in checklist])
+    else:
+        lines.append("- [ ] No obvious gaps detected from provided fields; complete final staff review.")
+
+    lines.extend(
+        [
+            "",
+            "---",
+            "**Disclaimer:** This tool assists with data gathering and draft language generation only. "
+            "All environmental determinations must be reviewed and approved by qualified Hydrex Environmental staff.",
+            "**Disclaimer:** This draft content does not make final environmental determinations. "
+            "Generated language must be reviewed and finalized by qualified Hydrex staff before submission.",
+        ]
     )
 
     return "\n".join(lines)
@@ -469,6 +577,7 @@ def list_projects():
     with get_connection() as conn:
         rows = conn.execute(
             "SELECT id, project_name, client, city, state, latitude, longitude, updated_at FROM projects ORDER BY updated_at DESC"
+            "SELECT id, project_name, client, city, state, updated_at FROM projects ORDER BY updated_at DESC"
         ).fetchall()
     return jsonify([row_to_dict(row) for row in rows])
 
@@ -545,6 +654,8 @@ def generate_outputs():
             "disclaimer": (
                 "This tool assists with data gathering and draft language generation only. "
                 "All environmental determinations must be reviewed and approved by qualified Hydrex Environmental staff."
+                "This draft content does not make final environmental determinations. "
+                "Generated language must be reviewed by qualified Hydrex staff before submission."
             ),
         }
     )
@@ -573,3 +684,6 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", "8080"))
     host = os.environ.get("HOST", "0.0.0.0")
     app.run(debug=True, host=host, port=port)
+    app.run(debug=True, host="127.0.0.1", port=port)
+    app.run(debug=True, host="127.0.0.1", port=6000)
+    app.run(debug=True, host="127.0.0.1", port=5000)

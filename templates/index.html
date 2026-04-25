@@ -15,6 +15,10 @@
         <p class="disclaimer">
           This tool assists with data gathering and draft language generation only. All environmental determinations
           must be reviewed and approved by qualified Hydrex Environmental staff.
+        <p class="subtitle">Internal HUD environmental worksheet drafting dashboard</p>
+        <p class="disclaimer">
+          Disclaimer: Generated text is draft support only. Qualified Hydrex staff must review and finalize all
+          environmental determinations before submission.
         </p>
       </header>
 
@@ -71,6 +75,32 @@
         <label class="full">Optional TCEQ dataset upload (CSV with name,type,status,latitude,longitude)
           <input type="file" id="tceqFile" accept=".csv,text/csv" />
         </label>
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
+
+        <label class="full">Description of work <textarea name="description_of_work"></textarea></label>
+
+        <label class="full"
+          >Does project include development, construction, rehab increasing residential density, or conversion?
+          <select name="density_or_conversion">
+            <option value="">Select...</option>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </label>
+
+        <label class="full">Notes on nearby aboveground storage tanks within 1 mile <textarea name="nearby_tanks_notes"></textarea></label>
+        <label class="full">Notes on contamination sources within 0.5 mile <textarea name="contamination_sources_notes"></textarea></label>
+
+        <label>RCRA sites count <input type="number" min="0" step="1" name="rcra_count" value="0" /></label>
+        <label>LPST count <input type="number" min="0" step="1" name="lpst_count" value="0" /></label>
+        <label>PST count <input type="number" min="0" step="1" name="pst_count" value="0" /></label>
+
+        <label class="full">Groundwater contamination notes <textarea name="groundwater_notes"></textarea></label>
+        <label class="full">Radon exemption/testing notes <textarea name="radon_notes"></textarea></label>
+        <label class="full">Data sources checked <textarea name="data_sources_checked" placeholder="E.g., EDR, EPA Envirofacts, state DEQ maps, local planning"></textarea></label>
+        <label class="full">Uploaded map/report references <textarea name="uploaded_refs" placeholder="List map names, report file names, and dates"></textarea></label>
+>>>>>>> main
       </section>
 
       <section class="outputs">
@@ -113,6 +143,10 @@
 
         <article>
           <h3>Missing Evidence (for worksheet file)</h3>
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
+          <h3>Missing Evidence Checklist</h3>
+>>>>>>> main
           <ul id="checklistOutput"></ul>
         </article>
       </section>
