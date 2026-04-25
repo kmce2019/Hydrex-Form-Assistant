@@ -1,0 +1,16 @@
+[Unit]
+Description=Hydrex Form Assistant
+After=network.target
+
+[Service]
+Type=simple
+User=__SERVICE_USER__
+WorkingDirectory=__WORKDIR__
+Environment=HOST=0.0.0.0
+Environment=PORT=8080
+ExecStart=__WORKDIR__/start.sh
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

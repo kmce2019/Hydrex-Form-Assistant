@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hydrex Form Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  </head>
+  <body>
+    <main class="dashboard">
+      <header>
+        <h1>Hydrex Form Assistant</h1>
+        <p class="subtitle">HUD-style environmental worksheet data gathering + draft support.</p>
+        <p class="disclaimer">
+          This tool assists with data gathering and draft language generation only. All environmental determinations
+          must be reviewed and approved by qualified Hydrex Environmental staff.
+        </p>
+      </header>
+
+      <section class="grid two-col">
+        <div>
+          <label>Saved Projects</label>
+          <div class="row">
+            <select id="savedProjects"></select>
+            <button id="loadBtn" type="button">Load</button>
+            <button id="newBtn" type="button" class="secondary">New</button>
+          </div>
+        </div>
+        <div class="right-actions">
+          <button id="saveBtn" type="button">Save Project</button>
+          <button id="exportBtn" type="button" class="secondary">Export Markdown</button>
+          <button id="exportPdfBtn" type="button" class="secondary">Export PDF</button>
+        </div>
+      </section>
+
+      <section class="grid three-col" id="intakeForm">
+        <label>Project name <input name="project_name" required /></label>
+        <label>Client <input name="client" /></label>
+        <label>Project type <input name="project_type" /></label>
+        <label>Address / location description <input name="address" /></label>
+        <label>City <input name="city" /></label>
+        <label>County <input name="county" /></label>
+        <label>State <input name="state" /></label>
+        <label>Site visit date <input type="date" name="site_visit_date" value="{{ today }}" /></label>
+        <label>Inspector/preparer <input name="inspector" /></label>
+        <label>Latitude <input type="number" step="any" name="latitude" /></label>
+        <label>Longitude <input type="number" step="any" name="longitude" /></label>
+        <label>Map/report references <input name="uploaded_refs" /></label>
+
+        <label class="full">Description of work <textarea name="description_of_work"></textarea></label>
+        <label class="full">Development/Construction/Rehab density increase/conversion? <select name="density_or_conversion"><option value="">Select...</option><option>Yes</option><option>No</option></select></label>
+        <label class="full">Nearby aboveground storage tanks within 1 mile <textarea name="nearby_tanks_notes"></textarea></label>
+        <label class="full">Contamination sources within 0.5 mile <textarea name="contamination_sources_notes"></textarea></label>
+
+        <label>RCRA count <input type="number" min="0" step="1" name="rcra_count" value="0" /></label>
+        <label>LPST count <input type="number" min="0" step="1" name="lpst_count" value="0" /></label>
+        <label>PST count <input type="number" min="0" step="1" name="pst_count" value="0" /></label>
+
+        <label class="full">Groundwater notes <textarea name="groundwater_notes"></textarea></label>
+        <label class="full">Radon exemption/testing notes <textarea name="radon_notes"></textarea></label>
+        <label class="full">Data sources checked (manual notes) <textarea name="data_sources_checked"></textarea></label>
+
+        <fieldset class="full source-track">
+          <legend>Structured source tracking</legend>
+          <label><input type="checkbox" name="source_check" value="EPA ECHO" /> EPA ECHO</label>
+          <label><input type="checkbox" name="source_check" value="NEPAssist" /> NEPAssist</label>
+          <label><input type="checkbox" name="source_check" value="TCEQ" /> TCEQ</label>
+          <label><input type="checkbox" name="source_check" value="Site visit" /> Site visit</label>
+        </fieldset>
+
+        <label class="full">Optional TCEQ dataset upload (CSV with name,type,status,latitude,longitude,capacity,contents,registry_id)
+          <input type="file" id="tceqFile" accept=".csv,text/csv" />
+        </label>
+      </section>
+
+      <section class="outputs">
+        <div class="row space-between">
+          <h2>Environmental Data Search</h2>
+          <button id="runSearchBtn" type="button">Run Environmental Search</button>
+        </div>
+        <p id="searchStatus" class="status"></p>
+
+        <div class="cards" id="resultsCards">
+          <article class="card"><h3>RCRA within 0.5 mile</h3><p id="rcraCard">-</p></article>
+          <article class="card"><h3>LPST within 0.5 mile</h3><p id="lpstCard">-</p></article>
+          <article class="card"><h3>PST/Tanks within 1 mile</h3><p id="pstCard">-</p></article>
+          <article class="card"><h3>Nearest facility</h3><p id="nearestCard">-</p></article>
+        </div>
+
+        <div id="map"></div>
+
+        <article class="panel" id="selectedTankPanel">
+          <h3>Selected Assessed Tank</h3>
+          <div id="selectedTankDetails">No tank selected.</div>
+          <button id="clearTankBtn" type="button" class="secondary">Clear selected tank</button>
+        </article>
+
+        <article class="panel">
+          <h3>HUD Answers</h3>
+          <pre id="hudAnswers">Run Generate Summaries to populate HUD answers.</pre>
+        </article>
+
+        <article>
+          <h3>Evidence Checklist</h3>
+          <ul id="evidenceChecklist"></ul>
+        </article>
+
+        <div class="row space-between">
+          <h2>Generated Draft Language</h2>
+          <button id="generateBtn" type="button">Generate Summaries</button>
+        </div>
+
+        <article>
+          <h3>Explosive and Flammable Hazards</h3>
+          <textarea id="explosiveOutput" readonly></textarea>
+          <button class="copy-btn" data-target="explosiveOutput" type="button">Copy</button>
+        </article>
+
+        <article>
+          <h3>Contamination and Toxic Substances</h3>
+          <textarea id="contaminationOutput" readonly></textarea>
+          <button class="copy-btn" data-target="contaminationOutput" type="button">Copy</button>
+        </article>
+
+        <article>
+          <h3>Missing Evidence Checklist</h3>
+          <ul id="checklistOutput"></ul>
+        </article>
+      </section>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>
