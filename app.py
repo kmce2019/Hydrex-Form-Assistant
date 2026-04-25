@@ -482,6 +482,11 @@ def build_markdown_report(project: dict[str, Any]) -> str:
     checklist = missing_evidence(project)
     results = safe_json_load(project.get("environmental_results_json"), {})
 
+    lines: list[str] = []
+    lines.append(f"# Hydrex Form Assistant Report - {value_or_unknown(project.get('project_name'))}")
+    lines.append("")
+    lines.append("## Project Intake")
+
     lines = [
         f"# Hydrex Form Assistant Report - {value_or_unknown(project.get('project_name'))}",
         "",
@@ -493,6 +498,31 @@ def build_markdown_report(project: dict[str, Any]) -> str:
         label = field.replace("_", " ").title()
         lines.append(f"- **{label}:** {value_or_unknown(project.get(field))}")
 
+    lines.append("")
+    lines.append("## Automated Data Results")
+    lines.append(f"- **RCRA sites within 0.5 mile:** {int_or_zero(results.get('rcra_count_half_mile'))}")
+    lines.append(f"- **LPST sites within 0.5 mile:** {int_or_zero(results.get('lpst_count_half_mile'))}")
+    lines.append(f"- **PST sites within 1 mile:** {int_or_zero(results.get('pst_count_one_mile'))}")
+    lines.append(f"- **Nearest facility distance:** {results.get('nearest_facility_miles', 'not documented')}")
+    lines.append(f"- **Sources used:** {', '.join(results.get('sources_used', [])) or 'not documented'}")
+
+    lines.append("")
+    lines.append("## Explosive and Flammable Hazards (Draft)")
+    lines.append(explosive)
+    lines.append("")
+    lines.append("## Contamination and Toxic Substances (Draft)")
+    lines.append(contamination)
+    lines.append("")
+    lines.append("## Evidence Checklist")
+
+    for item in checklist:
+        lines.append(f"- [ ] {item}")
+
+    lines.append("")
+    lines.append("---")
+    lines.append(
+        "**Disclaimer:** This tool assists with data gathering and draft language generation only. "
+        "All environmental determinations must be reviewed and approved by qualified Hydrex Environmental staff."
     lines.extend(
         [
             "",

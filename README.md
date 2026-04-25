@@ -43,6 +43,8 @@ Hydrex Form Assistant is a local-first internal web app for collecting HUD envir
 6. App parses optional uploaded TCEQ CSV and filters by distance.
 7. App stores structured results JSON, source-tracking JSON, and buffer metadata in SQLite.
 8. User reviews, manually overrides if needed, then generates worksheet draft text.
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
 Hydrex Form Assistant is a local-first internal web app for collecting project intake data and drafting language for HUD environmental worksheets.
 
 ## Features
@@ -57,6 +59,7 @@ Hydrex Form Assistant is a local-first internal web app for collecting project i
 - Copy-to-clipboard for each generated summary.
 - Export project report as Markdown.
 - Internal-use disclaimer requiring qualified staff review.
+>>>>>>> main
 
 ## Tech Stack
 
@@ -70,7 +73,10 @@ Hydrex Form Assistant is a local-first internal web app for collecting project i
 
 1. Ensure Python 3.10+ is installed.
 2. Create and activate virtual environment:
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
 2. Create and activate a virtual environment:
+>>>>>>> main
 
 ```bash
 python3 -m venv .venv
@@ -140,6 +146,8 @@ python3 -m py_compile app.py
 ```
 
 ## Seed sample project
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
 ## Seed sample project
 If you need a different port:
 
@@ -165,6 +173,7 @@ Then open: <http://127.0.0.1:6000>
 Then open: <http://127.0.0.1:5000>
 
 ## Seed a Sample Project
+>>>>>>> main
 
 ```bash
 python3 seed_sample_project.py
@@ -208,6 +217,8 @@ These return structured JSON-style objects and mirror the backend workflow desig
 
 - SQLite DB: `hydrex_form_assistant.db`
 - Markdown exports: `exports/`
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
 A sample project named **Maple Court Rehab** will be inserted into the SQLite database.
 
 ## Data Storage
@@ -218,3 +229,4 @@ A sample project named **Maple Court Rehab** will be inserted into the SQLite da
 ## Notes
 
 This app does **not** make final environmental determinations. Generated text must be reviewed and finalized by qualified Hydrex staff before submission.
+>>>>>>> main

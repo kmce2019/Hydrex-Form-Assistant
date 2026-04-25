@@ -42,9 +42,12 @@ function setSelectedSources(values = []) {
   document.querySelectorAll('input[name="source_check"]').forEach((el) => {
     el.checked = values.includes(el.value);
   });
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
 
 function allFields() {
   return Array.from(formContainer.querySelectorAll('input[name], select[name], textarea[name]'));
+>>>>>>> main
 }
 
 function collectPayload() {
@@ -65,9 +68,12 @@ function collectPayload() {
   }
 
   if (currentProjectId) payload.id = currentProjectId;
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
   if (currentProjectId) {
     payload.id = currentProjectId;
   }
+>>>>>>> main
   return payload;
 }
 
@@ -149,9 +155,12 @@ function renderMap(results = {}) {
   });
 
   map.setView(center, 13);
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
   checklistOutput.innerHTML = '';
   explosiveOutput.value = '';
   contaminationOutput.value = '';
+>>>>>>> main
 }
 
 async function refreshProjects() {
@@ -175,7 +184,10 @@ async function refreshProjects() {
 async function saveProject() {
   const payload = collectPayload();
   if (!payload.project_name?.trim()) {
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
   if (!payload.project_name.trim()) {
+>>>>>>> main
     alert('Project name is required.');
     return;
   }
@@ -268,6 +280,8 @@ async function generateSummaries() {
 }
 
 function exportMarkdown() {
+<<<<<<< codex/build-hydrex-form-assistant-web-app-jhxidc
+=======
   if (data.missing_evidence.length === 0) {
     const li = document.createElement('li');
     li.textContent = 'No obvious gaps detected from provided fields; complete final staff review.';
@@ -282,6 +296,7 @@ function exportMarkdown() {
 }
 
 async function exportMarkdown() {
+>>>>>>> main
   if (!currentProjectId) {
     alert('Save the project before export.');
     return;
